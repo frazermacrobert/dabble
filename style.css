@@ -1,0 +1,455 @@
+/* ================================================================
+   DABBLE-INSPIRED STYLE.CSS
+   Living Job Spec - Frazer MacRobert → Dabble P&C Advisor
+   ================================================================ */
+
+/* ===== THEME VARIABLES (Dabble Brand Colors) ===== */
+:root {
+    /* Dabble Purple Palette */
+    --primary-purple: #6B46C1;          /* Signature Dabble purple */
+    --accent-purple: #9F7AEA;           /* Lighter purple for accents */
+    --deep-purple: #4C1D95;             /* Deep purple for depth */
+    
+    /* Dabble Accent Colors */
+    --accent-yellow: #F59E0B;           /* Vibrant yellow for highlights */
+    --accent-blue: #3B82F6;             /* Clean blue for trust elements */
+    --accent-gold: #FCD34D;             /* Gold for premium touches */
+    
+    /* Backgrounds - Dark Theme */
+    --bg-dark: #1F2937;                 /* Primary dark background */
+    --bg-darker: #111827;               /* Deeper background */
+    --card-bg: #374151;                 /* Card backgrounds */
+    --card-hover: #4B5563;              /* Card hover state */
+    
+    /* Text Colors */
+    --text-white: #FFFFFF;
+    --text-light: #F3F4F6;
+    --text-gray: #D1D5DB;
+    --text-muted: #9CA3AF;
+    
+    /* Highlight States */
+    --highlight-bg: rgba(251, 191, 36, 0.15);   /* Yellow highlight background */
+    --highlight-border: #FBBF24;                 /* Yellow border */
+    --highlight-glow: rgba(245, 158, 11, 0.4);  /* Glow effect */
+    
+    /* Borders & Dividers */
+    --border-color: #4B5563;
+    --border-light: #6B7280;
+    
+    /* Typography */
+    --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+}
+
+/* ===== BASE RESET & FOUNDATION ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* ===== HEADER STYLING ===== */
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--primary-purple);
+    position: relative;
+}
+
+header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-yellow), var(--accent-gold));
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 0.75rem;
+    color: var(--text-white);
+    background: linear-gradient(135deg, var(--accent-purple), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+header p {
+    color: var(--text-gray);
+    font-size: 1rem;
+    font-weight: var(--font-weight-normal);
+}
+
+/* ===== GRID LAYOUT ===== */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* ===== INSTRUCTION BOX ===== */
+.instructions {
+    background: linear-gradient(135deg, var(--deep-purple), var(--primary-purple));
+    border: 1px solid var(--accent-purple);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+}
+
+.instructions strong {
+    color: var(--accent-yellow);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ===== PANEL CARDS ===== */
+.panel {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    position: sticky;
+    top: 2rem;
+    transition: all 0.3s ease;
+}
+
+.panel:hover {
+    box-shadow: 0 8px 30px rgba(107, 70, 193, 0.4);
+    border-color: var(--accent-purple);
+}
+
+.panel-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-yellow);
+    margin-bottom: 1.75rem;
+    font-weight: var(--font-weight-bold);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(180deg, var(--accent-yellow), var(--accent-gold));
+    border-radius: 2px;
+}
+
+/* ===== JOB REQUIREMENTS ===== */
+.requirement {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-radius: 8px;
+    background: var(--bg-darker);
+    border: 1px solid var(--border-color);
+}
+
+.requirement:hover {
+    background: var(--card-hover);
+    border-left-color: var(--accent-purple);
+    border-color: var(--accent-purple);
+    transform: translateX(4px);
+    box-shadow: 0 2px 12px rgba(159, 122, 234, 0.3);
+}
+
+.requirement.active {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+    border-left-color: var(--accent-yellow);
+    border-color: var(--highlight-border);
+    box-shadow: 0 4px 16px var(--highlight-glow);
+    transform: translateX(8px);
+}
+
+.requirement-title {
+    font-weight: var(--font-weight-bold);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-white);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.requirement.active .requirement-title {
+    color: var(--accent-yellow);
+}
+
+.requirement-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.requirement.active .requirement-desc {
+    color: var(--text-gray);
+}
+
+/* ===== CV EXPERIENCE SECTIONS ===== */
+.cv-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-darker);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.4;
+    transform: translateX(0);
+}
+
+.cv-section.highlighted {
+    opacity: 1;
+    border-color: var(--highlight-border);
+    background: linear-gradient(135deg, 
+        rgba(251, 191, 36, 0.12), 
+        rgba(245, 158, 11, 0.08)
+    );
+    transform: translateX(-8px);
+    box-shadow: 
+        0 4px 20px rgba(245, 158, 11, 0.3),
+        inset 0 0 0 1px var(--highlight-border);
+    position: relative;
+}
+
+.cv-section.highlighted::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent-yellow), var(--accent-gold));
+    border-radius: 12px 0 0 12px;
+}
+
+.cv-section.visible {
+    opacity: 1;
+}
+
+.cv-role {
+    font-weight: var(--font-weight-bold);
+    font-size: 1.125rem;
+    color: var(--text-white);
+    margin-bottom: 0.25rem;
+}
+
+.cv-section.highlighted .cv-role {
+    color: var(--accent-yellow);
+}
+
+.cv-org {
+    color: var(--accent-purple);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-weight: var(--font-weight-medium);
+}
+
+.cv-summary {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.cv-highlights {
+    list-style: none;
+    font-size: 0.875rem;
+}
+
+.cv-highlights li {
+    padding-left: 1.5rem;
+    margin-bottom: 0.625rem;
+    position: relative;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.cv-highlights li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: var(--font-weight-bold);
+    font-size: 1.1rem;
+}
+
+.cv-section.highlighted .cv-highlights li {
+    color: var(--text-gray);
+}
+
+.cv-section.highlighted .cv-highlights li:before {
+    color: var(--accent-yellow);
+}
+
+/* ===== COMMENTARY PANEL ===== */
+.commentary {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    max-width: 420px;
+    background: linear-gradient(135deg, var(--primary-purple), var(--deep-purple));
+    color: var(--text-white);
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 
+        0 8px 32px rgba(107, 70, 193, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.commentary.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.commentary::before {
+    content: '💡';
+    position: absolute;
+    top: -12px;
+    left: 1.5rem;
+    font-size: 1.5rem;
+    background: var(--deep-purple);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--accent-yellow);
+}
+
+.commentary-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-light);
+    font-weight: var(--font-weight-normal);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .panel {
+        position: relative;
+        top: 0;
+    }
+
+    .commentary {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin-top: 2rem;
+        max-width: 100%;
+    }
+    
+    .commentary::before {
+        top: 1.5rem;
+        left: auto;
+        right: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .panel {
+        padding: 1.5rem;
+    }
+    
+    .requirement {
+        padding: 1rem;
+    }
+    
+    .cv-section {
+        padding: 1.25rem;
+    }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+.requirement:focus,
+.requirement:focus-visible {
+    outline: 2px solid var(--accent-yellow);
+    outline-offset: 2px;
+}
+
+/* ===== SMOOTH SCROLLING ===== */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ===== SELECTION STYLING ===== */
+::selection {
+    background: var(--accent-yellow);
+    color: var(--bg-darker);
+}
+
+::-moz-selection {
+    background: var(--accent-yellow);
+    color: var(--bg-darker);
+}
+
+/* ===== CUSTOM SCROLLBAR (Webkit browsers) ===== */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-purple);
+    border-radius: 6px;
+    border: 2px solid var(--bg-darker);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-purple);
+}
