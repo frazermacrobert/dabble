@@ -14,9 +14,9 @@
 </head>
 <body>
     <div class="container">
-        <!-- HERO SECTION -->
-        <div class="hero">
-            <div class="hero-content">
+        <!-- HERO SECTION WITH SPLIT LAYOUT -->
+        <div class="hero" id="hero">
+            <div class="hero-left">
                 <div class="hero-badge">Available • Leeds/Remote</div>
                 <h1 class="hero-title">Frazer MacRobert</h1>
                 <p class="hero-subtitle">Behaviour Change Specialist → People & Culture Advisor</p>
@@ -25,11 +25,31 @@
                     <span class="credential">✍️ Published Author</span>
                     <span class="credential">🏆 10+ Years Senior Level</span>
                 </div>
-                <div class="hero-cta">
-                    <button id="autoplay-btn" class="btn-primary">▶ Auto-Play Tour (90s)</button>
-                    <span class="or-text">or explore manually below</span>
+            </div>
+            
+            <!-- COMMENTARY PANEL (REPLACES IMAGE) -->
+            <div class="hero-right" id="hero-commentary">
+                <div class="commentary-placeholder">
+                    <div class="placeholder-icon">👆</div>
+                    <div class="placeholder-text">Click any requirement below to see why Frazer's experience matches</div>
+                </div>
+                
+                <div class="commentary-content" id="commentary-content" style="display: none;">
+                    <div class="commentary-header">
+                        <span class="commentary-icon">💡</span>
+                        <span class="commentary-title" id="commentary-title">Why This Matches</span>
+                    </div>
+                    <div class="commentary-text" id="commentary-text"></div>
+                    <div class="commentary-tags" id="commentary-tags"></div>
+                    <div class="commentary-impact" id="commentary-impact"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- QUICK NAVIGATION ICONS -->
+        <div class="icon-navigation" id="icon-navigation">
+            <div class="icon-nav-label">Quick Navigation:</div>
+            <div class="icon-nav-items" id="icon-nav-items"></div>
         </div>
 
         <!-- FIT SCORE TRACKER -->
@@ -72,19 +92,10 @@
             </div>
         </div>
 
-        <!-- ENHANCED COMMENTARY PANEL -->
-        <div class="commentary" id="commentary">
-            <div class="commentary-header">
-                <span class="commentary-icon">💡</span>
-                <span class="commentary-title">Why This Matches</span>
-            </div>
-            <div class="commentary-text" id="commentary-text"></div>
-            <div class="commentary-tags" id="commentary-tags"></div>
-            <div class="commentary-impact" id="commentary-impact"></div>
-        </div>
-
-        <!-- CONNECTION LINES CANVAS -->
-        <canvas id="connection-canvas"></canvas>
+        <!-- SCROLL TO TOP LIGHTBULB -->
+        <button class="scroll-to-top" id="scroll-to-top" style="display: none;" title="View why this matches">
+            💡
+        </button>
     </div>
 
     <script>
@@ -277,8 +288,7 @@
 
         // ===== STATE MANAGEMENT =====
         let exploredRequirements = new Set();
-        let isAutoPlaying = false;
-        let autoPlayInterval = null;
+        let currentRequirement = null;
 
         // ===== MAPPING LOGIC =====
         function findMatchingExperience(requirement) {
@@ -310,6 +320,19 @@
             });
         }
 
+        function renderIconNavigation() {
+            const container = document.getElementById('icon-nav-items');
+            jobData.requirements.forEach(req => {
+                const icon = document.createElement('button');
+                icon.className = 'icon-nav-item';
+                icon.dataset.id = req.id;
+                icon.textContent = req.iconEmoji;
+                icon.title = req.title;
+                icon.addEventListener('click', () => handleRequirementClick(req));
+                container.appendChild(icon);
+            });
+        }
+
         function renderCV() {
             const container = document.getElementById('cv');
             cvData.experience.forEach(exp => {
@@ -332,6 +355,8 @@
 
         // ===== INTERACTION LOGIC =====
         function handleRequirementClick(requirement) {
+            currentRequirement = requirement;
+            
             // Track exploration
             exploredRequirements.add(requirement.id);
             updateFitScore();
@@ -341,6 +366,11 @@
                 el.classList.remove('active');
                 el.classList.remove('explored');
             });
+            
+            document.querySelectorAll('.icon-nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
             document.querySelectorAll('.cv-section').forEach(el => {
                 el.classList.remove('highlighted');
                 el.classList.add('visible');
@@ -348,8 +378,16 @@
 
             // Mark as explored
             const reqElement = document.querySelector(`.requirement[data-id="${requirement.id}"]`);
-            reqElement.classList.add('active');
-            reqElement.classList.add('explored');
+            const iconElement = document.querySelector(`.icon-nav-item[data-id="${requirement.id}"]`);
+            
+            if (reqElement) {
+                reqElement.classList.add('active');
+                reqElement.classList.add('explored');
+            }
+            
+            if (iconElement) {
+                iconElement.classList.add('active');
+            }
 
             // Highlight matching experience
             const matches = findMatchingExperience(requirement);
@@ -371,16 +409,27 @@
                 }
             });
 
-            // Show enhanced commentary
-            showEnhancedCommentary(requirement, matches);
+            // Show enhanced commentary in hero section
+            showHeroCommentary(requirement, matches);
+            
+            // Show scroll-to-top button
+            document.getElementById('scroll-to-top').style.display = 'flex';
         }
 
-        function showEnhancedCommentary(requirement, matches) {
-            const commentary = document.getElementById('commentary');
+        function showHeroCommentary(requirement, matches) {
+            const placeholder = document.querySelector('.commentary-placeholder');
+            const content = document.getElementById('commentary-content');
+            const commentaryTitle = document.getElementById('commentary-title');
             const commentaryText = document.getElementById('commentary-text');
             const commentaryTags = document.getElementById('commentary-tags');
             const commentaryImpact = document.getElementById('commentary-impact');
             
+            // Hide placeholder, show content
+            placeholder.style.display = 'none';
+            content.style.display = 'block';
+            
+            // Update title with requirement name
+            commentaryTitle.textContent = `Why This Matches: ${requirement.title}`;
             commentaryText.textContent = requirement.commentary;
             
             // Show matching tags
@@ -401,8 +450,6 @@
                 <div class="impact-label">📊 Measurable Impact:</div>
                 <div class="impact-text">${requirement.impact}</div>
             `;
-            
-            commentary.classList.add('visible');
         }
 
         function updateFitScore() {
@@ -414,53 +461,14 @@
             document.getElementById('fit-progress-bar').style.width = `${percentage}%`;
         }
 
-        // ===== AUTO-PLAY TOUR =====
-        function startAutoPlay() {
-            if (isAutoPlaying) return;
-            
-            isAutoPlaying = true;
-            const btn = document.getElementById('autoplay-btn');
-            btn.textContent = '⏸ Pause Tour';
-            btn.classList.add('playing');
-            
-            let currentIndex = 0;
-            
-            function playNext() {
-                if (!isAutoPlaying) return;
-                
-                if (currentIndex >= jobData.requirements.length) {
-                    stopAutoPlay();
-                    return;
-                }
-                
-                handleRequirementClick(jobData.requirements[currentIndex]);
-                currentIndex++;
-                
-                autoPlayInterval = setTimeout(playNext, 8000); // 8 seconds per requirement
-            }
-            
-            playNext();
-        }
-
-        function stopAutoPlay() {
-            isAutoPlaying = false;
-            clearTimeout(autoPlayInterval);
-            const btn = document.getElementById('autoplay-btn');
-            btn.textContent = '▶ Auto-Play Tour (90s)';
-            btn.classList.remove('playing');
-        }
-
-        function toggleAutoPlay() {
-            if (isAutoPlaying) {
-                stopAutoPlay();
-            } else {
-                startAutoPlay();
-            }
+        function scrollToHero() {
+            document.getElementById('hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // ===== INITIALIZE =====
         document.addEventListener('DOMContentLoaded', () => {
             renderRequirements();
+            renderIconNavigation();
             renderCV();
             
             // Show all CV sections by default
@@ -468,8 +476,8 @@
                 el.classList.add('visible');
             });
             
-            // Setup auto-play button
-            document.getElementById('autoplay-btn').addEventListener('click', toggleAutoPlay);
+            // Setup scroll-to-top button
+            document.getElementById('scroll-to-top').addEventListener('click', scrollToHero);
             
             // Initialize fit score
             updateFitScore();
