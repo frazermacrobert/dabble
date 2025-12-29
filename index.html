@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frazer MacRobert → Dabble P&C Advisor</title>
+    <meta name="description" content="Interactive tool demonstrating how Frazer MacRobert's experience maps to Dabble's People & Culture Advisor role">
+    <meta property="og:title" content="Frazer MacRobert → Dabble P&C Advisor">
+    <meta property="og:description" content="Interactive role mapper - click requirements to explore fit">
+    <meta property="og:type" content="website">
+    <style>
+        /* ===== THEME VARIABLES (Easy Reskinning) ===== */
+        :root {
+            --primary-color: #2563eb;
+            --accent-color: #7c3aed;
+            --bg-color: #fafafa;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --highlight-bg: #fef3c7;
+            --highlight-border: #f59e0b;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* ===== BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* ===== CARDS ===== */
+        .panel {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .panel-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* ===== JOB REQUIREMENTS ===== */
+        .requirement {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .requirement:hover {
+            background: #f9fafb;
+            border-left-color: var(--primary-color);
+        }
+
+        .requirement.active {
+            background: var(--highlight-bg);
+            border-left-color: var(--highlight-border);
+        }
+
+        .requirement-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .requirement-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== CV EXPERIENCE ===== */
+        .cv-section {
+            margin-bottom: 2rem;
+            padding: 1.25rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            opacity: 0.4;
+        }
+
+        .cv-section.highlighted {
+            opacity: 1;
+            border-color: var(--highlight-border);
+            background: var(--highlight-bg);
+            transform: translateX(-4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .cv-section.visible {
+            opacity: 1;
+        }
+
+        .cv-role {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .cv-org {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cv-summary {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .cv-highlights {
+            list-style: none;
+            font-size: 0.875rem;
+        }
+
+        .cv-highlights li {
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .cv-highlights li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        /* ===== COMMENTARY ===== */
+        .commentary {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            max-width: 400px;
+            background: var(--accent-color);
+            color: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .commentary.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .commentary-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .panel {
+                position: relative;
+                top: 0;
+            }
+
+            .commentary {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin-top: 2rem;
+                max-width: 100%;
+            }
+        }
+
+        /* ===== INSTRUCTIONS ===== */
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .instructions strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Frazer MacRobert → Dabble People & Culture Advisor</h1>
+            <p>Click any requirement on the left to see relevant experience highlighted on the right</p>
+        </header>
+
+        <div class="instructions">
+            <strong>How this works:</strong> Each requirement from the Dabble role maps to specific experience in Frazer's background. Click to explore the connections and understand fit at a glance.
+        </div>
+
+        <div class="grid">
+            <!-- JOB REQUIREMENTS -->
+            <div class="panel">
+                <div class="panel-title">Role Requirements</div>
+                <div id="requirements"></div>
+            </div>
+
+            <!-- CV EXPERIENCE -->
+            <div class="panel">
+                <div class="panel-title">Relevant Experience</div>
+                <div id="cv"></div>
+            </div>
+        </div>
+
+        <!-- COMMENTARY PANEL -->
+        <div class="commentary" id="commentary">
+            <div class="commentary-text" id="commentary-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA STRUCTURE =====
+        const jobData = {
+            requirements: [
+                {
+                    id: "people-advisory",
+                    title: "People Advisory",
+                    description: "Act as trusted advisor on performance, development, conflict resolution, and employee wellbeing",
+                    tags: ["advisory", "leadership", "wellbeing", "conflict-resolution"],
+                    commentary: "10+ years advising senior leaders at Fortune 500 companies on people strategy, culture transformation, and behavioural change—exactly the high-integrity partnership this role demands."
+                },
+                {
+                    id: "culture-champion",
+                    title: "Culture Champion & Localisation",
+                    description: "Own cultural initiatives, manage UK cultural calendar, support team events and embody core values",
+                    tags: ["culture", "events", "community", "values"],
+                    commentary: "Built award-winning safety cultures and internal comms programmes across multiple organizations. Author of 'Fan Centric Design'—culture building is literally in the portfolio."
+                },
+                {
+                    id: "global-collaboration",
+                    title: "Global Collaboration",
+                    description: "Partner with Global P&C and Talent teams on high-performance solutions, onboarding, and talent management",
+                    tags: ["collaboration", "talent", "onboarding", "global"],
+                    commentary: "Collaborated with international teams at UNICEF, GIZ, Shell, and others across 4 continents. Fluent in aligning regional initiatives with global strategy."
+                },
+                {
+                    id: "hr-operations",
+                    title: "HR Operations & Compliance",
+                    description: "Ensure UK legal compliance, execute employment documentation, assist with payroll and benefits",
+                    tags: ["compliance", "operations", "documentation", "payroll"],
+                    commentary: "Managed end-to-end HR operations for own 25-30 person business including contracts, compliance, payroll. Know what precision in documentation means when it matters."
+                },
+                {
+                    id: "behaviour-change",
+                    title: "Behaviour Change Expertise",
+                    description: "Drive adoption of new practices, policies and cultural shifts through evidence-based approaches",
+                    tags: ["behaviour-change", "innovation", "strategy"],
+                    commentary: "NanoMBA in Behavioural Science (2024). Specialist in cybersecurity and safety behaviour change projects at ScarlettAbbott—leveraging evidence-based frameworks to shift organizational behaviour at scale."
+                },
+                {
+                    id: "comms-strategy",
+                    title: "Internal Communications & Strategy",
+                    description: "Shape messaging and engagement strategies that resonate across diverse teams",
+                    tags: ["communications", "strategy", "engagement", "messaging"],
+                    commentary: "10+ years leading internal comms at senior level. Built comms frameworks that cut through noise for Fortune 500 companies—knows how to make messages land with diverse audiences."
+                },
+                {
+                    id: "autonomous-execution",
+                    title: "Autonomous, High-Integrity Execution",
+                    description: "Work independently, manage priorities in fast-paced environment, handle confidential information",
+                    tags: ["autonomy", "integrity", "fast-paced", "confidentiality"],
+                    commentary: "Ran own business managing 25-30 staff across 2 cities. Agency background means juggling competing priorities under tight deadlines is second nature. Integrity is non-negotiable."
+                },
+                {
+                    id: "tools-tech",
+                    title: "Tech Proficiency",
+                    description: "MS Office Suite; experience with Slack, Rippling, Trello, Figma is a plus",
+                    tags: ["tools", "technology", "software"],
+                    commentary: "Daily user of Slack, Trello, Asana, Notion, Figma, Miro. AI-integrated workflows across Adobe Creative Suite, WordPress, analytics platforms. Tech-fluent and adaptable."
+                }
+            ]
+        };
+
+        const cvData = {
+            experience: [
+                {
+                    id: "scarlettabbott",
+                    role: "IC Consultant",
+                    org: "ScarlettAbbott",
+                    period: "Dec 2023 - Present",
+                    summary: "Improving employee experience for Fortune 500 clients through data-driven people strategy",
+                    highlights: [
+                        "Specialist in cybersecurity & physical safety behaviour change projects",
+                        "Lead AI adoption, optimization & change programmes",
+                        "Clients: Pernod Ricard, Harbour Energy, Johnson Matthey, Currys, British Gas, Coca Cola, Anglo American"
+                    ],
+                    tags: ["advisory", "behaviour-change", "strategy", "global", "innovation", "engagement"]
+                },
+                {
+                    id: "wabt",
+                    role: "People Strategy & Change Associate",
+                    org: "We Are Brass Tacks",
+                    period: "Oct 2022 - Oct 2023",
+                    summary: "Built award-winning safety frameworks and internal comms for Fortune 500 companies",
+                    highlights: [
+                        "Used behavioural science methodologies to construct resonant messaging",
+                        "Tailored strategy to cut through internal comms noise across entire organizations",
+                        "Clients: Shell Bitumen, DCC Group, CERTAS Energy, SGN, BIFFA"
+                    ],
+                    tags: ["culture", "behaviour-change", "communications", "strategy", "wellbeing", "compliance"]
+                },
+                {
+                    id: "17triggers",
+                    role: "Business Development & HCD Facilitator",
+                    org: "17 Triggers",
+                    period: "Jul 2021 - Oct 2022",
+                    summary: "Led HCD workshops and proposal development securing six-figure contracts",
+                    highlights: [
+                        "Designed & facilitated strategic alignment, ideation, co-creation sessions",
+                        "Managed internal communications and digital content",
+                        "Clients: UNICEF, GIZ Jordan, GIZ Cambodia, WaterAid, USAID"
+                    ],
+                    tags: ["global", "collaboration", "events", "talent", "communications"]
+                },
+                {
+                    id: "mad",
+                    role: "Head of Communications",
+                    org: "Mäd",
+                    period: "Mar 2020 - Jun 2021",
+                    summary: "Led all MarComms for high-profile clients across multiple sectors",
+                    highlights: [
+                        "Facilitated HCD branding workshops with co-creation activities",
+                        "Managed multiple competing priorities under tight deadlines",
+                        "Growth mindset approach to continuous learning and exceeding expectations"
+                    ],
+                    tags: ["communications", "strategy", "autonomy", "fast-paced", "leadership"]
+                },
+                {
+                    id: "neverland",
+                    role: "Managing Director",
+                    org: "Neverland (Own Venture)",
+                    period: "May 2013 - Dec 2017",
+                    summary: "Led team of 25-30 across two cities managing all business operations",
+                    highlights: [
+                        "Managed HR, finance, events, marketing, and day-to-day operations",
+                        "Developed deep understanding of compliance, payroll, contracts",
+                        "Built multiple sub-brands with strong market positioning"
+                    ],
+                    tags: ["operations", "autonomy", "integrity", "confidentiality", "compliance", "payroll", "documentation", "leadership"]
+                },
+                {
+                    id: "education",
+                    role: "Behavioural Science Specialist",
+                    org: "NanoMBA + Multiple Certifications",
+                    period: "2022-2024",
+                    summary: "Formal training in behavioural economics and human-centered design",
+                    highlights: [
+                        "Completed NanoMBA in Behavioural Science (2024)",
+                        "Certifications in HCD, Behavioural Economics, Strategic Marketing",
+                        "Published author: 'Fan Centric Design' and multiple thought leadership pieces"
+                    ],
+                    tags: ["behaviour-change", "innovation", "strategy", "culture", "advisory"]
+                },
+                {
+                    id: "tools",
+                    role: "Tech-Fluent Professional",
+                    org: "Cross-Platform Experience",
+                    period: "Ongoing",
+                    summary: "Proficient across modern collaboration and design tools",
+                    highlights: [
+                        "Daily tools: Slack, Trello, Asana, Notion, Figma, Miro",
+                        "Design: Adobe Creative Suite, WordPress, Webflow",
+                        "AI integrations: WordHero, Jarvis AI, custom workflows"
+                    ],
+                    tags: ["tools", "technology", "software", "collaboration"]
+                },
+                {
+                    id: "events",
+                    role: "Event & Community Management",
+                    org: "Multiple Ventures",
+                    period: "2008-2020",
+                    summary: "Extensive background managing large-scale events and community engagement",
+                    highlights: [
+                        "Managed venue for high-profile congress events (Cannes, Nice)",
+                        "Led 80+ ambassador team for music festival (RockNess)",
+                        "Ran flagship student nightclub with 7 nightly brands"
+                    ],
+                    tags: ["events", "community", "culture", "values", "engagement", "onboarding"]
+                }
+            ]
+        };
+
+        // ===== MAPPING LOGIC =====
+        function findMatchingExperience(requirement) {
+            return cvData.experience.filter(exp => {
+                return requirement.tags.some(tag => exp.tags.includes(tag));
+            });
+        }
+
+        // ===== RENDER FUNCTIONS =====
+        function renderRequirements() {
+            const container = document.getElementById('requirements');
+            jobData.requirements.forEach(req => {
+                const div = document.createElement('div');
+                div.className = 'requirement';
+                div.dataset.id = req.id;
+                div.innerHTML = `
+                    <div class="requirement-title">${req.title}</div>
+                    <div class="requirement-desc">${req.description}</div>
+                `;
+                div.addEventListener('click', () => handleRequirementClick(req));
+                container.appendChild(div);
+            });
+        }
+
+        function renderCV() {
+            const container = document.getElementById('cv');
+            cvData.experience.forEach(exp => {
+                const div = document.createElement('div');
+                div.className = 'cv-section';
+                div.dataset.id = exp.id;
+                
+                const highlights = exp.highlights.map(h => `<li>${h}</li>`).join('');
+                
+                div.innerHTML = `
+                    <div class="cv-role">${exp.role}</div>
+                    <div class="cv-org">${exp.org}</div>
+                    <div class="cv-summary">${exp.summary}</div>
+                    <ul class="cv-highlights">${highlights}</ul>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ===== INTERACTION LOGIC =====
+        let activeRequirement = null;
+
+        function handleRequirementClick(requirement) {
+            // Clear previous selection
+            document.querySelectorAll('.requirement').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.cv-section').forEach(el => {
+                el.classList.remove('highlighted');
+                el.classList.add('visible');
+            });
+
+            // Set new selection
+            const reqElement = document.querySelector(`.requirement[data-id="${requirement.id}"]`);
+            reqElement.classList.add('active');
+
+            // Highlight matching experience
+            const matches = findMatchingExperience(requirement);
+            const matchIds = matches.map(m => m.id);
+            
+            document.querySelectorAll('.cv-section').forEach(el => {
+                if (matchIds.includes(el.dataset.id)) {
+                    el.classList.add('highlighted');
+                } else {
+                    el.classList.remove('visible');
+                }
+            });
+
+            // Show commentary
+            showCommentary(requirement.commentary);
+            activeRequirement = requirement;
+        }
+
+        function showCommentary(text) {
+            const commentary = document.getElementById('commentary');
+            const commentaryText = document.getElementById('commentary-text');
+            commentaryText.textContent = text;
+            commentary.classList.add('visible');
+        }
+
+        // ===== INITIALIZE =====
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRequirements();
+            renderCV();
+            
+            // Show all CV sections by default
+            document.querySelectorAll('.cv-section').forEach(el => {
+                el.classList.add('visible');
+            });
+        });
+    </script>
+</body>
+</html>
